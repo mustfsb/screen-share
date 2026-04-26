@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/tooltip";
 import { createPeerId, type RoomRole } from "@/lib/room";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { resolveIceServers } from "@/lib/webrtc";
+import { getDisplayMediaOptions, resolveIceServers } from "@/lib/webrtc";
 
 type PresencePayload = {
   peerId: string;
@@ -218,10 +218,9 @@ export function RoomClient({
     setStatus("Baglaniyor");
 
     try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true,
-      });
+      const stream = await navigator.mediaDevices.getDisplayMedia(
+        getDisplayMediaOptions(),
+      );
 
       localStreamRef.current = stream;
       if (localVideoRef.current) {
@@ -233,7 +232,9 @@ export function RoomClient({
       });
 
       if (stream.getAudioTracks().length === 0) {
-        setWarning("Ses yakalanamadi. Paylasim sadece ekran goruntusu ile suruyor.");
+        setWarning(
+          "Tarayici bu secim icin ses track'i vermedi. Chrome/Edge'de sekme paylasirken 'Sekme sesini paylas' kutusunu isaretle; pencere veya tum ekran ses destegi tarayici ve isletim sistemine gore degisir.",
+        );
       }
 
       setIsSharing(true);

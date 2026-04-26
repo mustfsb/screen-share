@@ -10,6 +10,12 @@ export type IceServerResolution = {
   error?: string;
 };
 
+type DisplayMediaOptionsWithAudioHints = DisplayMediaStreamOptions & {
+  systemAudio?: "include" | "exclude";
+  windowAudio?: "exclude" | "system" | "window";
+  surfaceSwitching?: "include" | "exclude";
+};
+
 export function resolveIceServers(rawValue: string | undefined): IceServerResolution {
   if (!rawValue) {
     return { iceServers: DEFAULT_ICE_SERVERS };
@@ -38,4 +44,18 @@ function isIceServerLike(value: unknown): value is RTCIceServer {
     typeof urls === "string" ||
     (Array.isArray(urls) && urls.every((url) => typeof url === "string"))
   );
+}
+
+export function getDisplayMediaOptions(): DisplayMediaOptionsWithAudioHints {
+  return {
+    video: true,
+    audio: {
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: false,
+    },
+    systemAudio: "include",
+    windowAudio: "system",
+    surfaceSwitching: "include",
+  };
 }

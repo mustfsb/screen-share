@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveIceServers } from "./webrtc";
+import { getDisplayMediaOptions, resolveIceServers } from "./webrtc";
 
 describe("resolveIceServers", () => {
   it("uses a public STUN server when no env value is provided", () => {
@@ -34,6 +34,22 @@ describe("resolveIceServers", () => {
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       error:
         "NEXT_PUBLIC_RTC_ICE_SERVERS must be a JSON array of RTCIceServer objects.",
+    });
+  });
+});
+
+describe("getDisplayMediaOptions", () => {
+  it("asks the browser to include screen, tab, or window audio when supported", () => {
+    expect(getDisplayMediaOptions()).toEqual({
+      video: true,
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+      },
+      systemAudio: "include",
+      windowAudio: "system",
+      surfaceSwitching: "include",
     });
   });
 });
